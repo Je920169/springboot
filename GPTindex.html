@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Enrollment System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .course-list, .enrollments {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .course, .enrollment {
+            background-color: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .course header, .enrollment header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .course .details, .enrollment .details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .course .details div, .enrollment .details div {
+            flex: 1;
+            min-width: 150px;
+        }
+        .course button, .enrollment button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .course button:hover, .enrollment button:hover {
+            background-color: #218838;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Course Enrollment System</h1>
+        
+        <div class="form-container">
+            <h2>Enroll in a Course</h2>
+            <form id="enrollForm">
+                <div class="form-group">
+                    <label for="studentId">Select Student:</label>
+                    <select id="studentId" required>
+                        <!-- JavaScript will populate this -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="courseId">Select Course:</label>
+                    <select id="courseId" required>
+                        <!-- JavaScript will populate this -->
+                    </select>
+                </div>
+                <button type="submit">Enroll</button>
+            </form>
+        </div>
+
+        <h2>Available Courses</h2>
+        <div class="course-list" id="courseList">
+            <!-- JavaScript will populate this -->
+        </div>
+
+        <h2>Student Enrollments</h2>
+        <div class="enrollments" id="enrollments">
+            <!-- JavaScript will populate this -->
+        </div>
+    </div>
+
+    <script>
+        // 模擬數據
+        const students = [
+            {id: 1, name: 'Alice'},
+            {id: 2, name: 'Dennis'},
+            {id: 3, name: 'Emily'},
+            {id: 4, name: 'Frank'}
+        ];
+
+        const courses = [
+            {id: 1, subject: 'Introduction to Computer Science', teacher: 'Dr. Allen', place: 'Room 101', time: '(二)03-04', credits: 2, quota: 40, remark: 'Required for CS majors'},
+            {id: 2, subject: 'Calculus I', teacher: 'Dr. Johnson', place: 'Room 102', time: '(三)01-03', credits: 3, quota: 30, remark: 'Required for Math majors'},
+            {id: 3, subject: 'Introduction to Art', teacher: 'Dr. Smith', place: 'Room 103', time: '(一)05-06', credits: 2, quota: 20, remark: 'Elective course for all majors'},
+            {id: 4, subject: 'Basic Cooking', teacher: 'Dr. Brown', place: 'Room 104', time: '(四)05-06', credits: 2, quota: 25, remark: 'Elective course for all majors'},
+            {id: 5, subject: 'Advanced Physics', teacher: 'Dr. James', place: 'Room 105', time: '(五)03-04', credits: 2, quota: 35, remark: 'Required for Physics majors'},
+            {id: 6, subject: 'Organic Chemistry', teacher: 'Dr. Green', place: 'Room 106', time: '(一)06-08', credits: 3, quota: 30, remark: 'Required for Chemistry majors'}
+        ];
+
+        const enrollments = [];
+
+        function populateSelect(selectId, data, key) {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '';
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item[key];
+                option.textContent = item[key] + ' - ' + item.name;
+                select.appendChild(option);
+            });
+        }
+
+        function populateCourseList() {
+            const courseList = document.getElementById('courseList');
+            courseList.innerHTML = '';
+            courses.forEach(course => {
+                const courseDiv = document.createElement('div');
+                courseDiv.className = 'course';
+                courseDiv.innerHTML = `
+                    <header>${course.subject}</header>
+                    <div class="details">
+                        <div><strong>Teacher:</strong> ${course.teacher}</div>
+                        <div><strong>Place:</strong> ${course.place}</div>
+                        <div><strong>Time:</strong> ${course.time}</div>
+                        <div><strong>Credits:</strong> ${course.credits}</div>
+                        <div><strong>Quota:</strong> ${course.quota}</div>
+                        <div><strong>Remark:</strong> ${course.remark}</div>
+                    </div>
+                    <button onclick="enrollCourse(${course.id})">Enroll</button>
+                `;
+                courseList.appendChild(courseDiv);
+            });
+        }
+
+        function populateEnrollments() {
+            const enrollmentsDiv = document.getElementById('enrollments');
+            enrollmentsDiv.innerHTML = '';
+            enrollments.forEach(enrollment => {
+                const enrollmentDiv = document.createElement('div');
+                enrollmentDiv.className = 'enrollment';
+                const student = students.find(student => student.id === enrollment.studentId);
+                const course = courses.find(course => course.id === enrollment.courseId);
+                enrollmentDiv.innerHTML = `
+                    <header>${student.name} - ${course.subject}</header>
+                    <div class="details">
+                        <div><strong>Teacher:</strong> ${course.teacher}</div>
+                        <div><strong>Place:</strong> ${course.place}</div>
+                        <div><strong>Time:</strong> ${course.time}</div>
+                        <div><strong>Credits:</strong> ${course.credits}</div>
+                        <div><strong>Remark:</strong> ${course.remark}</div>
+                    </div>
+                    <button onclick="dropCourse(${enrollment.id})">Drop</button>
+                `;
+                enrollmentsDiv.appendChild(enrollmentDiv);
+            });
+        }
+
+        function enrollCourse(courseId) {
+            const studentId = parseInt(document.getElementById('studentId').value);
+            if (enrollments.some(enrollment => enrollment.studentId === studentId && enrollment.courseId === courseId)) {
+                alert('Student is already enrolled in this course.');
+                return;
+            }
+            const enrollment = {
+                id: enrollments.length + 1,
+                studentId: studentId,
+                courseId: courseId,
+                credits: courses.find(course => course.id === courseId).credits,
+                chooseTime: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            };
+            enrollments.push(enrollment);
+            populateEnrollments();
+        }
+
+        function dropCourse(enrollmentId) {
+            const index = enrollments.findIndex(enrollment => enrollment.id === enrollmentId);
+            if (index !== -1) {
+                enrollments.splice(index, 1);
+                populateEnrollments();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            populateSelect('studentId', students, 'id');
+            populateSelect('courseId', courses, 'id');
+            populateCourseList();
+            populateEnrollments();
+        });
+
+        document.getElementById('enrollForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const courseId = parseInt(document.getElementById('courseId').value);
+            enrollCourse(courseId);
+        });
+    </script>
+</body>
+</html>
